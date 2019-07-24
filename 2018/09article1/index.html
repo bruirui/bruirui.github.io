@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="个人网站"><title>css常用&amp;易忘属性 | MORE</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">css常用&amp;易忘属性</h1><a id="logo" href="/.">MORE</a><p class="description">Courage &amp; Confidence</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">css常用&amp;易忘属性</h1><div class="post-meta">Sep 3, 2018</div><div class="post-content"><blockquote>
+<p><a href="#1"><font color="#456782">table: border-collapse</font></a><br>  <a href="#2"><font color="#456782">-webkit-tap-highlight-color</font></a><br>  <a href="#3"><font color="#456782"> -webkit-text-size-adjust</font></a><br>  <a href="#4"><font color="#456782">-webkit-appearance</font></a><br>  <a href="#5"><font color="#456782">-webkit-user-select</font></a><br>  <a href="#6"><font color="#456782">-webkit-touch-callout</font></a><br>  <a href="#7"><font color="#456782">outline</font></a><br>  <a href="#8"><font color="#456782">文字截断</font></a></p>
+</blockquote>
+<h3 id="1">1. border-collapse</h3>设置表格的边框是否被合并为一个单一的边框。
+- separate,默认值。边框会被分开
+- collapse,边框会合并为单一的边框。会忽略border-spacing和empty-cells属性
+- inherit,从父元素继承border-collapse属性的值
+
+<h3 id="2">2. -webkit-tap-highlight-color</h3>这个属性只用于iOS (iPhone和iPad),当用户点击一个链接或者通过Javascript定义的可点击元素的时候，它就会出现一个半透明的灰色背景。要重设这个表现，可以修改该属性值。
+- color,颜色值
+- transparent,透明值
+
+<h3 id="3">3. -webkit-text-size-adjust</h3>
+- none,禁用Webkit内核浏览器的文字大小调整功能
+
+<h3 id="4">4. -webkit-appearance</h3>
+- none,消除输入框和按钮的原生外观
+
+<h3 id="5">5. -webkit-user-select</h3>
+- none,禁止页面文字选择，此属性不继承
+
+<h3 id="6">6. -webkit-touch-callout</h3>
+- none,禁用长按页面时的弹出菜单(ios下有效)，img和a标签都要加。例：禁止在微信环境下长按保存图片
+
+<h3 id="7">7. outline</h3>
+- none,取消chrome下默认的文本框聚焦样式
+
+<h3 id="8">8. 文字截断</h3>
+- text-overflow
+设置当文本溢出时表现
+    - ellipsis,显示省略号代替被修剪的文本
+    - clip,修剪文本
+    - string,使用给定字符串来代替被修剪的文本
+- white-space
+设置如何处理元素内的空白
+    - normal,默认值，空白被浏览器忽略
+    - pre,空白会被浏览器保留
+    - nowrap,文本不会换行，文本会在同一行上继续，直到遇到<br>为止
+    - pre-wrap,保留空白符序列，但是正常地进行换行
+    - pre-line,合并空白符序列，但是保留换行符
+    - inherit,从父元素继承
+- word-break
+规定自动换行的处理方法(可以让浏览器实现在任意位置的换行)
+    - normal,默认值，使用浏览器默认的换行规则
+    - break-all,允许在单词内换行
+    - keep-all,只能在半角空格或连字符处换行
+- -webkit-line-clamp: number
+限制在一个块元素显示的文本的行数
+该属性必须结合以下属性才能起作用：
+    - display: -webkit-box; 将对象作为弹性伸缩盒子模型显示
+    - -webkit-box-orient: vertical; 设置或检索伸缩盒对象的子元素的排列方式
+    - text-overflow: ellipsis; 用省略号替换被截断的文本
+
+<ul>
+<li><h4 id="单行截断"><a href="#单行截断" class="headerlink" title="单行截断:"></a>单行截断:</h4><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置文本不会换行，在同一行上继续绘制文本</span></span><br><span class="line"><span class="attribute">white-space</span>: nowrap;</span><br><span class="line"><span class="comment">//超过部分不显示</span></span><br><span class="line"><span class="attribute">overflow</span>: hidden;</span><br><span class="line"><span class="comment">//截断后用省略号替换被修剪的文本</span></span><br><span class="line"><span class="attribute">text-overflow</span>: ellipsis;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="多行截断"><a href="#多行截断" class="headerlink" title="多行截断:"></a>多行截断:</h4><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">display</span>: -webkit-box;</span><br><span class="line"><span class="comment">//规定超过两行的部分截断</span></span><br><span class="line">-webkit-line-clamp: <span class="number">2</span>;</span><br><span class="line">-webkit-box-orient: vertical;</span><br><span class="line"><span class="comment">//截断后用省略号替换被修剪的文本</span></span><br><span class="line"><span class="attribute">text-overflow</span>: ellipsis; </span><br><span class="line"><span class="comment">//超过部分不显示</span></span><br><span class="line"><span class="attribute">overflow</span> : hidden;</span><br><span class="line"><span class="attribute">word-break</span>: break-all;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>​    </p>
+</div><div class="tags"><a href="/tags/css/">css</a></div><div class="post-nav"><a class="pre" href="/2018/09article2/">Node 修改文件夹下所有文件</a><a class="next" href="/2018/08article11/">cocos creator游戏开发</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://yoursite.com"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/小游戏/" style="font-size: 15px;">小游戏</a> <a href="/tags/工具/" style="font-size: 15px;">工具</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/HTTP/" style="font-size: 15px;">HTTP</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/nodeJS/" style="font-size: 15px;">nodeJS</a> <a href="/tags/VUE/" style="font-size: 15px;">VUE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/06article1/">NVM | NRM | NPM</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article2/">npm包-版本号命名规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article1/">封装vue组件并使用npm发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article5/">vue生命周期</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article4/">mongoose使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article3/">面试题集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article2/">CSS 伪类和伪元素的区别</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article1/">为什么用Object.prototype.toString.call(obj)检测对象类型?</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09article3/">正则表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09article2/">Node 修改文件夹下所有文件</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">MORE.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

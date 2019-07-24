@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="个人网站"><title>HTTP缓存 | MORE</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">HTTP缓存</h1><a id="logo" href="/.">MORE</a><p class="description">Courage &amp; Confidence</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">HTTP缓存</h1><div class="post-meta">Aug 29, 2018</div><div class="post-content"><blockquote>
+<p><a href="#1"><font color="#456782">HTTP缓存分类</font></a><br>  <a href="#2"><font color="#456782">浏览器根据什么判断使用强制缓存？</font></a><br>  <a href="#3"><font color="#456782">服务端是如何判断资源是否过期的？</font></a></p>
+</blockquote>
+<h3 id="1">1.HTTP缓存分类</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">强制缓存</th>
+<th align="left">对比缓存(协商缓存)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">定义</td>
+<td align="left">强制缓存是指如果浏览器中存在缓存数据并且数据没有过期，就直接从缓存中读取数据，无需向服务器发请求</td>
+<td align="left">对比缓存指如果浏览器中存在缓存数据，则必须向服务器发起请求以询问该数据是否过期，从而决定是否使用本地缓存</td>
+</tr>
+</tbody></table>
+<h3 id="2">2.浏览器根据什么判断使用强制缓存？</h3><font color="#9e845a">注意：如果Expires和Cache-Control同时存在，Cache-Control优先级高于Expires(建议2个都写，兼容http版本)</font>
+主要根据2个HTTP响应头判断：<font color="#9e845a">Expires和Cache-Control</font>
+Expires(HTTP1.0)值是服务端设置的资源过期时间，如果当下时间早于过期时间，则直接使用缓存资源。但因为服务端设置的过期时间是绝对时间，而浏览器跟服务器的时间可能不一致，可能会产生误差，所以Expires响应头已经用的比较少了。
+Cache-Control(HTTP1.1)值有如下几个: privare(默认值)、public、no-cache、max-age、no-store。
+private：指客户端可以缓存
+public：指客户端和代理服务器都可以缓存
+No-cache：指需要使用对比缓存来验证缓存数据
+No-store：指所有内容都不会缓存，强制缓存和对比缓存都不会触发
+Max-age=xxx：指缓存的内容将在xxx秒后失效(相对时间)
+
+<h3 id="3">3.服务端是如何判断资源是否过期的？</h3><font color="#9e845a">注意：如果Etag和Last-Modified同时存在，Etag优先级高于Last-Modified</font>
+主要通过响应头和请求头间进行传递，服务端通过缓存标识判断资源是否过期。
+① <font color="#9e845a">Last-Modified响应头和If-Modified-Since请求头</font>
+Last-Modified值表示资源的最后修改时间，在浏览器第一次发起HTTP请求时，服务器会返回该响应头。
+浏览器在下次发起HTTP请求时，会带上If-Modified-Since，其值就是Last-Modified的值。
+服务器收到请求后会将请求头If-Modified-Since的值和被请求资源的最后修改时间进行比对。若资源的最后修改时间大于If-Modified-Since，说明该资源已被改动过，则响应完整的资源，返回状态码200；若小于或等于，说明资源未被修改，则响应304，告知浏览器继续使用缓存内容。
+② <font color="#9e845a">Etag响应头和If-None-Match请求头</font>
+Etag响应头的值为当前资源在服务器的唯一标识，在浏览器第一次发起HTTP请求时，服务器会返回该响应头。
+当浏览器下次发起请求该资源时，会带上If-None-Match请求头，其值为第一次请求服务器返回的Etag值。
+服务器收到请求后发现有请求头If-None-Match则与被请求资源的唯一标识进行比对。若不同，说明资源被改动，响应完整的资源内容，返回状态码200；若相同，则说明未被改动，响应304，告知浏览器使用缓存内容
+
+<h3 id="HTTP缓存流程图"><a href="#HTTP缓存流程图" class="headerlink" title="HTTP缓存流程图"></a>HTTP缓存流程图</h3><div id="flowchart-0" class="flow-chart"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">st=>start: 发起请求|past:>http://www.google.com[blank]
+e=>end: 呈现:>http://www.google.com
+c1=>condition: 是否有缓存?
+sub1=>operation: 200,向web服务器发送请求,请求响应,缓存协商
+c2=>condition: Cache-Control过期?
+c3=>condition: Expires过期?
+c4=>condition: 存在Etag?
+sub2=>operation: 向服务器请求带If-None-Match
+c5=>condition: 存在Last-Modified?
+sub3=>operation: 向服务器请求带if-Modified-Since
+c6=>condition: 是否过期200or304?
+sub4=>operation: 304,从缓存读取
+
+st->c1(no)->sub1
+c1(yes,left)->c2
+c2(yes)->c3(no)->sub4
+c2(no)->sub4
+c3(yes)->c4
+c4(yes)->sub2->c6
+c4(no)->c5(yes)->sub3->c6
+c5(no)->sub1
+c6(yes)->sub1
+c6(no)->sub4->e
+sub1->e</textarea><textarea id="flowchart-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script></div><div class="tags"><a href="/tags/HTTP/">HTTP</a></div><div class="post-nav"><a class="pre" href="/2018/08article10/">css3动画</a><a class="next" href="/2018/08article8/">HTTP基础</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://yoursite.com"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/小游戏/" style="font-size: 15px;">小游戏</a> <a href="/tags/工具/" style="font-size: 15px;">工具</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/HTTP/" style="font-size: 15px;">HTTP</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/nodeJS/" style="font-size: 15px;">nodeJS</a> <a href="/tags/VUE/" style="font-size: 15px;">VUE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/06article1/">NVM | NRM | NPM</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article2/">npm包-版本号命名规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article1/">封装vue组件并使用npm发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article5/">vue生命周期</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article4/">mongoose使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article3/">面试题集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article2/">CSS 伪类和伪元素的区别</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article1/">为什么用Object.prototype.toString.call(obj)检测对象类型?</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09article3/">正则表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09article2/">Node 修改文件夹下所有文件</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">MORE.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

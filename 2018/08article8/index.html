@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="个人网站"><title>HTTP基础 | MORE</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">HTTP基础</h1><a id="logo" href="/.">MORE</a><p class="description">Courage &amp; Confidence</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">HTTP基础</h1><div class="post-meta">Aug 29, 2018</div><div class="post-content"><blockquote>
+<p><a href="#bb"><font color="#456782">HTTP协议版本及区别</font></a><br>  <a href="#ddxc"><font color="#456782">断点续传原理</font></a><br>  <a href="#ss"><font color="#456782">三次握手四次挥手</font></a><br>  <a href="#ztm"><font color="#456782">常用HTTP状态码</font></a><br>  <a href="#gp"><font color="#456782">GET和POST区别</font></a><br>  <a href="#hc"><font color="#456782">HTTP缓存</font></a></p>
+</blockquote>
+<h3 id="bb">1.HTTP协议版本及区别</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">HTTP 1.0</th>
+<th align="center">HTTP 1.1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">连接方式</td>
+<td align="center">每次请求/响应是一个连接</td>
+<td align="center"><a href="#cj"><font color="#456782">持久连接</font></a></td>
+</tr>
+<tr>
+<td align="left">是否同时可以发送多个http请求</td>
+<td align="center">不支持</td>
+<td align="center"><a href="#gxh"><font color="#456782">管线化(同时多个请求)</font></a></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="center"></td>
+<td align="center">新增 <a href="#ddxc"><font color="#456782">断点续传</font></a></td>
+</tr>
+<tr>
+<td align="left">请求方法</td>
+<td align="center">get,post,head,delete,put</td>
+<td align="center">新增: options,put,delete,trace,connect</td>
+</tr>
+</tbody></table>
+<ul>
+    <li>组成
+    请求报文: 请求头(key-value键值对)+<font color="#9e845a">请求行(Method+URI+http版本信息)</font>+请求体(请求参数)
+    响应报文: 响应头(key-value键值对)+<font color="#9e845a">响应行(http版本信息+状态码+状态码简易说明)</font>+响应体</li><li id="cj">持久连接  
+    持久连接节省通信流量，减少重复建立连接和断开连接所消耗的时间，并且服务器可主动向客户端推送消息。</li><li id="gxh">管线化  
+    HTTP 1.1版本实现管线化，客户端可同时发出多个HTTP请求，不用一个个等待响应。</li><li id="ddxc">断点续传原理  
+        一个简单的断点续传实现如下：
+        1. 客户端下载一个1024k的文件，已经下载了512k。
+        2. 网络中断，客户端请求续传，因此需要在HTTP头中申明本次需要续传的片段：Range: bytes=512000- ，这个头通知服务端从文件的521k位置开始传输文件。
+        3. 服务端接收到断点续传请求，从文件的521k位置开始传输，并在HTTP头中增加：Content-Range: bytes 512000-/1024000。且此时服务端返回的HTTP状态码应该是206，而不是200。
+
+<pre><code>实际场景中，会出现一种情况，就是在终端发起续传请求时，url对应的文件内容在服务端已经发生了变化，此时再续传的话数据肯定是错的。如何解决这个问题？
+解决该问题需要有一个标识文件唯一性的方法。客户端在发起续传请求时应在HTTP头中申请If-Match或者If-Modified-Since字段，帮助服务端判别文件变化。在HTTP1.1版本定义有一个If-Range头，客户端如果在续传时使用If-Range。If-Range的值可以是ETag头或者是Last-Modified中最后修改的时候。服务端在接收到续传请求时，通过If-Range值校验，检验一致返回206的续传回应，检验不一致返回200的回应，回应内容为新文件的全部数据。&lt;/li&gt;&lt;/ul&gt;</code></pre><h3 id="ss">2.三次握手四次挥手</h3>三次握手：
+        ① A向B发送建立连接请求。A=》B
+        ② B收到A的发送信号，并且向A发送确认信息。B=》A
+        ③ A收到B的确认信号，并且向B发送确认信号。A=》B
+        四次挥手：
+        ① A向B发起请求，表示A没有数据要发送了。A=》B
+        ② B向A发送确认信号，确认A的断开请求收到。B=》A
+        ③ B向A发送信号，请求断开连接，表示B没有数据要发送了。B=》A
+        ④ A向B发送确认信号，同意断开。A=》B
+
+<pre><code>为什么②、③次挥手不能合在一次挥手中？
+因为此时A是不再发送数据了，但可以接收数据。B可能还会发送数据给A，所以两次挥手不能合并为一次。</code></pre><h3 id="ztm">3.常用HTTP状态码</h3>200 发送请求成功
+        204 服务器成功处理请求，但不用返回任何实体内容
+        206 服务器成功处理了部分GET请求(实现断点续传)
+        301 永久性重定向
+        302 临时重定向
+        <font color="#9e845a">304 客户端已经执行了GET请求，但文件未变化=====与缓存相关</font>
+        307 临时重定向，与302类似，但强制要求使用POST方法
+        400 请求报文语法有误
+        401 请求需要认证
+        403 请求的对应资源禁止被访问
+        404 文件未找到，服务器无法找到对应的资源
+        500 服务器内部错误
+        502 网关错误
+        503 服务不可用
+        504 服务器正忙
+
+<h3 id="gp">4.GET和POST区别</h3>1. Get获取资源，post发送数据
+2. Get通过url请求传输数据，post将数据封存在实体中
+3. Get请求不安全，url是可见的。post安全性较高
+4. Get传输数据量小，post传输大量数据，所有上传文件只能用post方式
+5. Get只支持ASCII字符，向服务器发送中文字符可能会乱码，post支持标准字符集
+
+<h3 id="hc">5.HTTP缓存</h3>[<font color="#456782">参考另一篇文章: HTTP缓存</font>](../http缓存)
+
+
+</li></ul></div><div class="tags"><a href="/tags/HTTP/">HTTP</a></div><div class="post-nav"><a class="pre" href="/2018/08article9/">HTTP缓存</a><a class="next" href="/2018/08article7/">输入url发生了什么？</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://yoursite.com"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/小游戏/" style="font-size: 15px;">小游戏</a> <a href="/tags/工具/" style="font-size: 15px;">工具</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/HTTP/" style="font-size: 15px;">HTTP</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/nodeJS/" style="font-size: 15px;">nodeJS</a> <a href="/tags/VUE/" style="font-size: 15px;">VUE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/06article1/">NVM | NRM | NPM</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article2/">npm包-版本号命名规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article1/">封装vue组件并使用npm发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article5/">vue生命周期</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article4/">mongoose使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article3/">面试题集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article2/">CSS 伪类和伪元素的区别</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article1/">为什么用Object.prototype.toString.call(obj)检测对象类型?</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09article3/">正则表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09article2/">Node 修改文件夹下所有文件</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">MORE.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

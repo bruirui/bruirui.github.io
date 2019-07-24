@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="个人网站"><title>vue生命周期 | MORE</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">vue生命周期</h1><a id="logo" href="/.">MORE</a><p class="description">Courage &amp; Confidence</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">vue生命周期</h1><div class="post-meta">Oct 24, 2018</div><div class="post-content"><blockquote>
+<p>VUE生命周期</p>
+</blockquote>
+<p><font color="#F8A131">生命周期分为八个部分：创建前beforeCreate，创建后created，挂载前beforeMount，挂载后mounted，更新前beforeUpdate，更新后updated，销毁前beforeDestory，销毁后destroyed</font></p>
+<ol>
+<li>beforeCreate—实例创建前：这个阶段实例的data、methods是读不到的</li>
+<li>created—实例创建后：这个阶段已经完成了数据观测(data observer)，属性和方法的运算， watch/event 事件回调。mount挂载阶段还没开始，$el 属性目前不可见，数据并没有在DOM元素上进行渲染</li>
+<li>beforeMount—在挂载开始之前被调用：相关的 render 函数首次被调用</li>
+<li>mounted—el选项的DOM节点 被新创建的 vm.$el 替换，并挂载到实例上去之后调用此生命周期函数。此时实例的数据在DOM节点上进行渲染</li>
+<li>beforeUpdate—数据更新时调用，但不进行DOM重新渲染，在数据更新时DOM没渲染前可以在这个生命函数里进行状态处理</li>
+<li>updated—这个状态下数据更新并且DOM重新渲染，当这个生命周期函数被调用时，组件 DOM 已经更新，所以你现在可以执行依赖于 DOM 的操作。当实例每次进行数据更新时updated都会执行</li>
+<li>beforeDestory—实例销毁之前调用</li>
+<li>destroyed—Vue 实例销毁后调用。调用后，Vue 实例指示的所有东西都会解绑定，所有的事件监听器会被移除，所有的子实例也会被销毁。</li>
+</ol>
+<p><font color="#F8A131">vue生命周期在真实场景下的业务应用:</font></p>
+<ol>
+<li>created：进行ajax请求异步数据的获取、初始化数据</li>
+<li>mounted：挂载元素内dom节点的获取</li>
+<li>nextTick：针对单一事件更新数据后立即操作dom</li>
+<li>updated：任何数据的更新，如果要做统一的业务逻辑处理</li>
+<li>watch：监听具体数据变化，并做相应的处理</li>
+</ol>
+<p><font color="#F8A131">如何解释vue的生命周期才可以令面试官满意?</font></p>
+<p><font color="#456782">知识点①：</font></p>
+<ol>
+<li>breforeCreate()：实例创建前，这个阶段实例的data和methods是读不到的。</li>
+<li>created()：实例创建后，这个阶段已经完成数据观测，属性和方法的运算，watch/event事件回调,mount挂载阶段还没有开始。$el属性目前不可见，数据并没有在DOM元素上进行渲染。</li>
+<li>在谈及Vue的生命周期时，我们首先需要创建一个实例，也就是在new Vue（）的对象过程中，首先执行了init（init是vue组件里面默认去执行的），在init的过程中首先调用beforeCreate，然后在injections（注射）和reactivity（反应性）的时候，再去调用created，所以在init的时候，事件已经调用了，我们在beforcreate的时候千万不要去修改data里面的赋值的数据，最早也要放在created里面去做（添加一些行为）</li>
+</ol>
+<p><font color="#456782">知识点②：</font></p>
+<ol>
+<li><p>beforeMount：在挂载开始之前被调用：相关的 render 函数首次被调用。</p>
+</li>
+<li><p>mounted：el选项的DOM节点 被新创建的 vm.$el 替换，并挂载到实例上去之后调用此生命周期函数。此时实例的数据在DOM节点上进行渲染</p>
+</li>
+<li><p>在create完成之后，它会去判断instance（实例）里面是否含有“el”option（选项），如果没有的话。他会调用vm.$mount(el)这个方法，然后执行下一步；如果有的话，直接执行下一步。紧接着会判断时候含有“template”这个选项 ，如果有的话，他会把template解析成render function，这是一个template编译的过程，结果是解析成了render函数。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">render (h) &#123;</span><br><span class="line">  <span class="keyword">return</span> h(<span class="string">'div'</span>, &#123;&#125;, <span class="keyword">this</span>.text)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>(render函数：传参h就是Vue里面的createElement方法，return返回一个createElement方法，其中要传三个参数，第一个参数就是要创建的div标签，第二个参数穿了一个对象，对象里面可以是我们组件上面的props，或者是事件之类的东西；第三个参数就是div标签里面的内容，这里指向了data里面的text）</p>
+<p> 使用render函数的结果和我们之前使用template解析出来的结果是一样的。render函数是发生在breforeMount和mount之间的，这也从侧面说明了，在breforeMount的时候，$el还只是我们在HTML里面写的节点，然后到Mount的时候，他就把渲染出来的内容挂载到了Dom节点上，这种的中间的过程其实是执行了render function的内内容。</p>
+<p>beforeMount在有了render function的时候才会执行，当执行完render  function之后就会调用mounted这个钩子，在mounted挂载完毕之后，这个实例就算是走完了流程。</p>
+<p>后续的钩子函数执行的过程都是需要外部 的触发才会执行。比如，有数据的变化，会调用beforeUpdate，然后经过Virtual  Dom，最后updated更新完毕，当组件被销毁的时候，会调用beforeDestory，以及destoryed。</p>
+<p>钩子函数其实和回调函数是一个概念，当系统执行到某处时，检查是否有hook，有则回调。（每一个组件都有属性，方法和事件。所有的生命周期都归于事件，在某个时刻自动执行）。</p>
+</li>
+</ol>
+</div><div class="tags"><a href="/tags/VUE/">VUE</a></div><div class="post-nav"><a class="pre" href="/2019/05article1/">封装vue组件并使用npm发布</a><a class="next" href="/2018/10article4/">mongoose使用</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://yoursite.com"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/小游戏/" style="font-size: 15px;">小游戏</a> <a href="/tags/工具/" style="font-size: 15px;">工具</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/HTTP/" style="font-size: 15px;">HTTP</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/nodeJS/" style="font-size: 15px;">nodeJS</a> <a href="/tags/VUE/" style="font-size: 15px;">VUE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/06article1/">NVM | NRM | NPM</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article2/">npm包-版本号命名规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article1/">封装vue组件并使用npm发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article5/">vue生命周期</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article4/">mongoose使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article3/">面试题集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article2/">CSS 伪类和伪元素的区别</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article1/">为什么用Object.prototype.toString.call(obj)检测对象类型?</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09article3/">正则表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09article2/">Node 修改文件夹下所有文件</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">MORE.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
