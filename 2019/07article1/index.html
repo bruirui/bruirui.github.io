@@ -1,8 +1,8 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="个人网站"><title>前端测试：Karma+Mocha+PhantomJS | MORE</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">前端测试：Karma+Mocha+PhantomJS</h1><a id="logo" href="/.">MORE</a><p class="description">Courage &amp; Confidence</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">前端测试：Karma+Mocha+PhantomJS</h1><div class="post-meta">Jul 22, 2019</div><div class="post-content"><blockquote>
-<p>Karma是一个基于Node.js的JavaScript测试执行过程管理工具（Test Runner）。</p>
-<p>Mocha是一个测试框架，在vue-cli中配合chai断言库实现单元测试。</p>
+<p>适用vue项目：Karma + Mocha + Chai + Vue Test Utils</p>
 </blockquote>
-<h3 id="一、对测试框架的理解（npm-run-lint执行过程：）"><a href="#一、对测试框架的理解（npm-run-lint执行过程：）" class="headerlink" title="一、对测试框架的理解（npm run lint执行过程：）"></a>一、对测试框架的理解（npm run lint执行过程：）</h3><ol>
+<h3 id="一、对测试框架的理解（npm-run-lint执行过程：）"><a href="#一、对测试框架的理解（npm-run-lint执行过程：）" class="headerlink" title="一、对测试框架的理解（npm run lint执行过程：）"></a>一、对测试框架的理解（npm run lint执行过程：）</h3><p>开启Karma运行环境(启动PhantomJS浏览器)，使得Mocha在PhantomJS浏览器环境下运行，去执行所有测试脚本。</p>
+<ol>
 <li>执行npm run lint命令</li>
 <li>开启Karma运行环境</li>
 <li>使用Mocha逐个测试用Chai断言写的测试用例</li>
@@ -12,13 +12,19 @@
 <h3 id="二、Karma"><a href="#二、Karma" class="headerlink" title="二、Karma"></a>二、Karma</h3><ul>
 <li><p>[官网]: <a href="http://karma-runner.github.io/latest/index.html" target="_blank" rel="noopener">http://karma-runner.github.io/latest/index.html</a></p>
 </li>
-<li><p>Karma是一个驱动测试的Runner。</p>
+<li><p>Karma是一个驱动测试的Runner。通过karma的配置文件集成测试框架, 断言库和浏览器。</p>
+</li>
+<li><p>用来组织和运行整个测试的工具，它能够将测试框架、断言库、测试浏览器、测试代码和被测试代码组织起来，并运行被测试代码进行测试。</p>
 </li>
 <li><p>为测试框架(Mocha)准备允许的环境，让测试在真正的浏览器里运行。</p>
 </li>
-<li><p><strong>为前端自动化测试提供了跨浏览器测试的能力</strong>，可以自动在<code>Chrome</code>,<code>Firefox</code>,<code>IE</code>等主流浏览器依次跑完测试用例，同时也支持headless浏览器(入<code>phantomJs</code>)中运行测试用例。</p>
+<li><p>它是一个测试工具，能让你的代码在浏览器环境下测试。需要它的原因在于，你的代码可能是设计在浏览器端执行的，在node环境下测试可能有些bug暴露不出来；另外，浏览器有兼容问题，karma提供了手段让你的代码自动在多个浏览器（chrome，firefox，ie等）环境下运行。如果你的代码只会运行在node端，那么你不需要用karma。</p>
+</li>
+<li><p><strong>为前端自动化测试提供了跨浏览器测试的能力</strong>，可以自动在<code>Chrome</code>,<code>Firefox</code>,<code>IE</code>等主流浏览器依次跑完测试用例，同时也支持headless浏览器(如<code>phantomJs</code>)中运行测试用例。</p>
 </li>
 <li><p>Karma支持的测试框架：Mocha、Jasmine、Qunit。</p>
+</li>
+<li><p>该工具在Vue中的主要作用是将项目运行在各种主流Web浏览器进行测试。</p>
 </li>
 </ul>
 <h3 id="三、Mocha"><a href="#三、Mocha" class="headerlink" title="三、Mocha"></a>三、Mocha</h3><ul>
@@ -26,21 +32,30 @@
 </li>
 <li><p><strong>Mocha是前端自动化测试框架</strong>，测试框架需要解决<strong>兼容不同风格断言库</strong>，<strong>测试用例分组</strong>，<strong>同步异步测试架构</strong>，<strong>生命周期钩子</strong>等框架级的能力。</p>
 </li>
+<li><p>Mocha是JavaScript的一种单元测试框架。既可以在浏览器环境下运行，也可以在Node.js环境下运行。使用Mocha，只需专注于编写单元测试用例本身，让mocha去自动运行所有测试脚本，并给出测试结果。</p>
+</li>
+<li><p>特点：</p>
+<ul>
+<li>既可以测试简单的JavaScript函数，又可以测试异步代码，因为异步是JavaScript的特性之一；</li>
+<li>可以自动运行所有测试，也可以只运行特定的测试；</li>
+<li>可以支持before、after、beforeEach和afterEach来编写初始化代码；</li>
+</ul>
+</li>
 </ul>
 <h3 id="四、PhantomJS"><a href="#四、PhantomJS" class="headerlink" title="四、PhantomJS"></a>四、PhantomJS</h3><ul>
 <li><p>[官网]: <a href="https://phantomjs.org/" target="_blank" rel="noopener">https://phantomjs.org/</a></p>
 </li>
-<li><p>是一个基于 WebKit 的服务器端 JavaScript API，可以理解为无界面的浏览器。</p>
+<li><p>是一个基于 WebKit 的服务器端 JavaScript API，可以理解为无界面的浏览器。由于不渲染页面，网页的运行时间会大大缩短，该浏览器适用于测试。</p>
 </li>
-<li><p>由于不渲染页面，网页的运行时间会大大缩短，该浏览器适用于测试。</p>
-</li>
-<li><p>PhantomJS 可以用于 页面自动化(Page Automation) ， 网络监测(Network Monitoring) ， 网页截屏(Screen Capture) ，以及 无界面测试(Headless Website Testing) 等,简单来说就是通过js操作浏览器。</p>
+<li><p>PhantomJS 可以用于 页面自动化(Page Automation) ， 网络监测(Network Monitoring) ， 网页截屏(Screen Capture) ，以及 无界面测试(Headless Website Testing) 等，简单来说就是通过js操作浏览器。</p>
 </li>
 <li><p><strong>可测试类型</strong>：性能测试、功能测试、界面测试</p>
 </li>
-<li><p>缺点1：浏览器兼容。提供的是无界面的webkit内核浏览器，所以无法覆盖IE浏览器。</p>
-</li>
-<li><p>缺点2：设备兼容。</p>
+<li><p>缺点：</p>
+<ul>
+<li>浏览器兼容。提供的是无界面的webkit内核浏览器，所以无法覆盖IE浏览器；</li>
+<li>设备兼容；</li>
+</ul>
 </li>
 </ul>
 <h4 id="拓展-浏览器内核"><a href="#拓展-浏览器内核" class="headerlink" title="[拓展-浏览器内核]"></a>[拓展-浏览器内核]</h4><ul>
@@ -57,5 +72,9 @@
 </li>
 <li><p><a href="https://www.cnblogs.com/nxmin/p/9077187.html" target="_blank" rel="noopener">搭建 vue2 单元测试环境(karma+mocha+webpack3)</a></p>
 </li>
+<li><p><a href="https://blog.csdn.net/weixin_33805992/article/details/87988573" target="_blank" rel="noopener">前端测试简述及使用Karma/Mocha实现的集成测试栗子</a></p>
+</li>
+<li><p><a href="https://my.oschina.net/u/2510955/blog/910161" target="_blank" rel="noopener">karma + mocha 简单入门</a></p>
+</li>
 </ol>
-</div><div class="tags"><a href="/tags/工具/">工具</a></div><div class="post-nav"><a class="pre" href="/2019/07article2/">Karma+Mocha+PhantomJS搭建测试环境(支持ES6)</a><a class="next" href="/2019/06article1/">NVM | NRM | NPM</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://yoursite.com"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/小游戏/" style="font-size: 15px;">小游戏</a> <a href="/tags/工具/" style="font-size: 15px;">工具</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/HTTP/" style="font-size: 15px;">HTTP</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/VUE/" style="font-size: 15px;">VUE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/07article2/">Karma+Mocha+PhantomJS搭建测试环境(支持ES6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07article1/">前端测试：Karma+Mocha+PhantomJS</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06article1/">NVM | NRM | NPM</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article2/">npm包-版本号命名规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article1/">封装vue组件并使用npm发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article5/">vue生命周期</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article4/">mongoose使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article3/">面试题集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article2/">CSS 伪类和伪元素的区别</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article1/">为什么用Object.prototype.toString.call(obj)检测对象类型?</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">MORE.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
+</div><div class="tags"><a href="/tags/工具/">工具</a></div><div class="post-nav"><a class="pre" href="/2019/07article2/">Karma+Mocha+PhantomJS搭建测试环境(支持ES6)</a><a class="next" href="/2019/06article1/">NVM | NRM | NPM</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://yoursite.com"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/工具/" style="font-size: 15px;">工具</a> <a href="/tags/小游戏/" style="font-size: 15px;">小游戏</a> <a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/HTTP/" style="font-size: 15px;">HTTP</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/VUE/" style="font-size: 15px;">VUE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/09article1/">JavaScript浮点数</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07article2/">Karma+Mocha+PhantomJS搭建测试环境(支持ES6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07article1/">前端测试：Karma+Mocha+PhantomJS</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06article1/">NVM | NRM | NPM</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article2/">npm包-版本号命名规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article1/">封装vue组件并使用npm发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article5/">vue生命周期</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article4/">mongoose使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article3/">面试题集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article2/">CSS 伪类和伪元素的区别</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">MORE.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

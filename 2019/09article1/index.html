@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="个人网站"><title>JavaScript浮点数 | MORE</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">JavaScript浮点数</h1><a id="logo" href="/.">MORE</a><p class="description">Courage &amp; Confidence</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">JavaScript浮点数</h1><div class="post-meta">Sep 1, 2019</div><div class="post-content"><p>###JavaScript浮点数</p>
+<blockquote>
+<p>不知道大家在平时的搬砖中有没有遇到过关于JavaScript浮点数相关的坑，比如经典的双精度问题：0.1+0.2=0.30000000000000004。</p>
+</blockquote>
+<h4 id="一、抛出问题"><a href="#一、抛出问题" class="headerlink" title="一、抛出问题"></a>一、抛出问题</h4><ol>
+<li>为什么0.1 + 0.2 != 0.3 ?</li>
+<li>为什么 1.005.toFixed(2) = 1.00 而不是 1.01 ?</li>
+</ol>
+<h4 id="二、IEEE-754双精度浮点数规范"><a href="#二、IEEE-754双精度浮点数规范" class="headerlink" title="二、IEEE 754双精度浮点数规范"></a>二、IEEE 754双精度浮点数规范</h4><ol>
+<li><p>通过二进制的科学计数法存储</p>
+<p>和十进制的科学法类似，二进制的科学计数法为1.xxx * 2 ^ N。注意：二进制科学计数法的整数部分都为1，所以在存储时省略整数部分1。</p>
+<blockquote>
+<p>知识点：十进制转二进制（numberObject.toString(2)）</p>
+<p>在线转换工具：<a href="https://www.rapidtables.com/convert/number/decimal-to-binary.html" target="_blank" rel="noopener">参考这里</a></p>
+<p>二进制转十进制：<a href="https://www.jianshu.com/p/e301de533bc3" target="_blank" rel="noopener">参考这里</a></p>
+</blockquote>
+</li>
+<li><p>64位存储格式：1个符号位 + 11个指数位 + 52个尾数位</p>
+<ul>
+<li><p>符号位S：第1位是正负数符号位（sign），0代表正数，1代表负数</p>
+</li>
+<li><p>指数为E：中间的11位存储指数（exponent），用来表示次方数。科学计数法中指数E是可以为负数的，在表示负的指数时IEEE754标准引入了一个偏移量1023，在存储指数时加上该偏移量把负数E转成正数。这就导致11位的指数能够表示指数的范围是[-1023, 1024]。</p>
+</li>
+<li><p>尾数位M：最后的 52 位是尾数（mantissa），超出的部分自动进一舍零，没有填满的部分自动补0<br>如10进制数400.12，用10进制科学计数法表示为：4.0012 * 10 ^ 2,。其中”0012”就是尾数部分</p>
+<p>最终表示为：</p>
+<p><img src="../../resource/4265437015-5a7128ec20b81_articlex.png" alt="4265437015-5a7128ec20b81_articlex"></p>
+<p>其中，S, E, M都是实际存储科学计数法的值。</p>
+<p>举个例子：</p>
+<blockquote>
+<p>十进制4.5转成二进制为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="comment">// 1. 转为二进制</span></span><br><span class="line">&gt; <span class="number">100.1</span></span><br><span class="line">&gt; <span class="comment">// 2. 转为二进制科学计数法</span></span><br><span class="line">&gt; <span class="number">1.001</span> * <span class="number">2</span> ^ <span class="number">2</span></span><br><span class="line">&gt; </span><br><span class="line">&gt; <span class="function"><span class="params">S</span> =&gt;</span> <span class="number">0</span></span><br><span class="line">&gt; <span class="function"><span class="params">E</span> =&gt;</span> <span class="number">2</span> + <span class="number">1023</span> = <span class="number">1025</span></span><br><span class="line">&gt; <span class="function"><span class="params">M</span> =&gt;</span> <span class="number">001</span> <span class="comment">// 尾数部分，整数1被省略了</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>查看具体的存储情况: <a href="http://www.binaryconvert.com/result_double.html" target="_blank" rel="noopener">可参考这里</a></p>
+<p>或 <a href="http://bartaz.github.io/ieee754-visualization/" target="_blank" rel="noopener">这里</a></p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="三、解答问题"><a href="#三、解答问题" class="headerlink" title="三、解答问题"></a>三、解答问题</h4><ol>
+<li><p>第一个问题：为什么0.1 + 0.2 != 0.3 ?</p>
+<p>在浏览器控制台测试一下，可以看到结果如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.1</span> + <span class="number">0.2</span> <span class="comment">// 0.30000000000000004</span></span><br></pre></td></tr></table></figure>
+
+<p>问题解析：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.1</span> 转 二进制 =&gt; <span class="number">0.0001100110011001100</span>...（<span class="number">1100</span>循环）</span><br><span class="line">转科学计数法 =&gt; <span class="number">1.100110011001100</span>...(<span class="number">1100</span>循环) * <span class="number">2</span> ^ <span class="number">-4</span></span><br><span class="line">数据是无限循环的，但是可供使用的尾数却是有限的，只有<span class="number">52</span>位可以使用，所以在第<span class="number">53</span>位会被舍去并且进位</span><br></pre></td></tr></table></figure>
+
+<p>最终在计算机中存储如下图：</p>
+<p><img src="../../resource/0.1.png" alt="0.1"></p>
+<p>类似的0.2在计算机中的存储如下图：</p>
+<p><img src="../../resource/0.2.png" alt="0.2"></p>
+<p>所以最终计算是：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  <span class="number">0.00011001100110011001100110011001100110011001100110011010</span></span><br><span class="line">+ <span class="number">0.0011001100110011001100110011001100110011001100110011010</span></span><br><span class="line">= <span class="number">0.0100110011001100110011001100110011001100110011001100111</span></span><br></pre></td></tr></table></figure>
+
+<p>计算结果转换为十进制：0.30000000000000004。</p>
+<p>所以就是因为：0.1和0.2在计算机中的二进制存储会让它们本身损失掉一定的精度，而它们在计算机中的二进制存储转换成十进制时已经不是真正的0.1和0.2了，相加的结果也就自然不是0.3了。</p>
+</li>
+<li><p>第二个问题：为什么 1.005.toFixed(2) = 1.00 而不是 1.01 ?</p>
+<ol>
+<li><p>首先，我们解答下面的问题：</p>
+<p><strong>既然0.1在计算机中的存储已经有了舍入误差，那为什么num = 0.1能得到0.1呢？</strong></p>
+<p>可以再控制台使用toPrecision()看一下0.1在不同精度下的返回:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.1</span>.toPrecision(<span class="number">16</span>) <span class="comment">// 0.1000000000000000</span></span><br><span class="line"><span class="number">0.1</span>.toPrecision(<span class="number">20</span>) <span class="comment">// 0.10000000000000000555</span></span><br><span class="line"><span class="number">0.1</span>.toPrecision(<span class="number">52</span>) <span class="comment">// 0.1000000000000000055511151231257827021181583404541016</span></span><br><span class="line"><span class="number">0.1</span>.toPrecision(<span class="number">64</span>) <span class="comment">// 0.1000000000000000055511151231257827021181583404541015625000000000</span></span><br></pre></td></tr></table></figure>
+
+<p>实际上，0.1是截断了一部分精度后得到的结果。那么，双精度浮点数是按什么规则来进行截断的呢？</p>
+<blockquote>
+<p>如果一个双精度的浮点数转为十进制的数字时，只要它转回来的双精度浮点数不变，精度取最短的那个就行。(<a href="https://link.juejin.im/?target=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FDouble-precision_floating-point_format" target="_blank" rel="noopener">参考英文wiki</a>)</p>
+</blockquote>
+<p>拿0.1举例：</p>
+<p>​    0.1和0.10000000000000001转成双精度浮点数的存储是一样的，所以取最短的0.1就行了。</p>
+</li>
+<li><p>现在解答一下：为什么 1.005.toFixed(2) = 1.00 ？<br>之前已经说过，一个十进制数转为双精度浮点数，然后再取出来时，跟原十进制数可能会有误差。</p>
+<p>试一下1.005取20个精度：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.005</span>.toPrecision(<span class="number">20</span>) <span class="comment">// 1.0049999999999998934</span></span><br></pre></td></tr></table></figure>
+
+<p>很明显，1.005是被截断后的数字，它的双精度浮点数代表的20位精度的数字是1.0049999999999998934，所以进行保留2位的四舍五入时，2位后的数字会被全部舍去，最终得到1.00。</p>
+</li>
+</ol>
+</li>
+</ol>
+<h4 id="四、如何优雅的取数值的整数和小数部分"><a href="#四、如何优雅的取数值的整数和小数部分" class="headerlink" title="四、如何优雅的取数值的整数和小数部分"></a>四、如何优雅的取数值的整数和小数部分</h4><ul>
+<li><p>取整数</p>
+<p>在一些项目中经常能看到，parseInt() 常用来取整数部分，一般情况下，结果是没有问题的。但严格来说，其实parseInt不是用来取整数的。</p>
+<blockquote>
+<p>知识点：parseInt(string, radix) 是将一个字符串转换为整数的方法。第一个参数string：要转换的字符串，如果参数不是一个字符串，则先将其转换为字符串。第二个参数radix：进制，默认为10。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> num = <span class="number">2.55</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">parseInt</span>(num)) <span class="comment">// 2，先将2.55转为字符串"2.55",然后再parseInt成为2</span></span><br><span class="line">num = <span class="number">-2.55</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">parseInt</span>(num)) <span class="comment">// -2</span></span><br><span class="line"><span class="keyword">let</span> str = <span class="string">'3.12'</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">parseInt</span>(str)) <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+
+<p>所以，用parseInt()取整有2个不好的地方：</p>
+<ol>
+<li><p>该函数用于将字符串转整数</p>
+</li>
+<li><p>转字符串有点多此一举，而且会带来性能开销</p>
+</li>
+<li><p>严重bug</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">parseInt</span>(<span class="number">0.00000001</span>))	<span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 分步骤如下：</span></span><br><span class="line"><span class="comment">// 1. 转字符串</span></span><br><span class="line"><span class="number">0.00000001</span>.toString() <span class="comment">// 1e-8</span></span><br><span class="line"><span class="comment">// 2. 转为整数</span></span><br><span class="line"><span class="built_in">parseInt</span>(<span class="string">'1e-8'</span>) <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>用Math方法取整，相关有3个方法：Math.ceil()-向上取整、Math.round()-四舍五入、Math.floor()-向下取整。达到parseInt()的结果，需要判断数值的符号，如果是负数，则向上取整；如果是正数，则向下取整。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 取整数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">trunc</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (num &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">Math</span>.floor(num) <span class="comment">// 向下取整</span></span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">Math</span>.ceil(num) <span class="comment">// 向上取整</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">trunc(<span class="number">1.1</span>) <span class="comment">// 1</span></span><br><span class="line">trunc(<span class="number">1.9</span>) <span class="comment">// 1</span></span><br><span class="line">trunc(<span class="number">-1.1</span>) <span class="comment">// -1</span></span><br><span class="line">trunc(<span class="number">-1.9</span>) <span class="comment">// -1</span></span><br></pre></td></tr></table></figure>
+
+<p>实际上，在ES2015之后，还提供了Math.trunc()，可以直接使用。</p>
+</li>
+<li><p>取小数</p>
+<p>取了整数部分，取小数部分就很简单了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 思路：先用Math.trunc(num)取整，再与原数相减，就得到小数部分</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fract</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> num - <span class="built_in">Math</span>.trunc(num)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(fract(<span class="number">3.75</span>)) <span class="comment">// 0.75</span></span><br><span class="line"><span class="built_in">console</span>.log(fract(<span class="number">-3.75</span>)) <span class="comment">// -0.75</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，还有更简单的方式：</p>
+<blockquote>
+<p>js的取模运算%并不限于整数运算，对浮点数也同样适用</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">3.75</span> % <span class="number">1</span>); <span class="comment">// 0.75</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">-3.75</span> % <span class="number">1</span>); <span class="comment">// -0.75</span></span><br></pre></td></tr></table></figure>
+
+<p>反过来，可以倒推出另一种实现trunc取整的方式：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">trunc</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> num - num % <span class="number">1</span>; </span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(trunc(<span class="number">2.55</span>)) <span class="comment">// 2.55 - 0.55 = 2</span></span><br><span class="line"><span class="built_in">console</span>.log(trunc(<span class="number">-2.55</span>)) <span class="comment">// -2.55 - (-0.55) = -2</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="文章参考链接："><a href="#文章参考链接：" class="headerlink" title="文章参考链接："></a>文章参考链接：</h5><p><a href="https://segmentfault.com/a/1190000013177214" target="_blank" rel="noopener"><a href="https://segmentfault.com/a/1190000013177214" target="_blank" rel="noopener">JS-Number—了解IEEE双精度浮点数</a></a></p>
+<p><a href="https://juejin.im/post/5cf667b6f265da1bc23f6536?utm_medium=hao.caibaojian.com&utm_source=hao.caibaojian.com#heading-8" target="_blank" rel="noopener">前端应该知道的JavaScript浮点数和大数的原理</a></p>
+</div><div class="tags"></div><div class="post-nav"><a class="next" href="/2019/07article2/">Karma+Mocha+PhantomJS搭建测试环境(支持ES6)</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://yoursite.com"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/工具/" style="font-size: 15px;">工具</a> <a href="/tags/小游戏/" style="font-size: 15px;">小游戏</a> <a href="/tags/css/" style="font-size: 15px;">css</a> <a href="/tags/随笔/" style="font-size: 15px;">随笔</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/HTTP/" style="font-size: 15px;">HTTP</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/VUE/" style="font-size: 15px;">VUE</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/09article1/">JavaScript浮点数</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07article2/">Karma+Mocha+PhantomJS搭建测试环境(支持ES6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07article1/">前端测试：Karma+Mocha+PhantomJS</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/06article1/">NVM | NRM | NPM</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article2/">npm包-版本号命名规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/05article1/">封装vue组件并使用npm发布</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article5/">vue生命周期</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article4/">mongoose使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article3/">面试题集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10article2/">CSS 伪类和伪元素的区别</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2019 <a href="/." rel="nofollow">MORE.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
